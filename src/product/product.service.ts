@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { Product } from './dto/product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
@@ -20,16 +20,18 @@ export class ProductService {
     return data;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
-  }
-
-  update(id: number, updateProductDto: UpdateProductDto) {
-    return `This action updates a #${id} product`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} product`;
+  async findOne(id: number): Promise<Product> {
+    const supaClient = this.supaClient.getSupabaseClient();
+    const { data, error } = await supaClient
+      .from('products')
+      .select('*')
+      .eq('id', id)
+      .single();
+    console.log('aaa ', error.code);
+    if (error) {
+      throw error;
+    }
+    return data;
   }
 
   check(): string {
