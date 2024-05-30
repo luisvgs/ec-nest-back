@@ -33,4 +33,9 @@ export class ProductController {
   findOne(@Query('id', ParseIntPipe) id: number): Promise<Product> {
     return this.productService.findOne(id);
   }
+
+  @Get('by-category')
+  findByCategory(@Query('category') category: string): Promise<Product[]> {
+    return this.productService.findByCategory(category);
+  }
 }

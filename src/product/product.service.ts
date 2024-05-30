@@ -6,14 +6,16 @@ import { SupabaseService } from 'src/supabase.service';
 
 @Injectable()
 export class ProductService {
-  constructor(private readonly supaClient: SupabaseService) {}
+  private readonly supaClient: any;
+  constructor(private readonly supabaseService: SupabaseService) {
+    this.supaClient = this.supabaseService.getSupabaseClient();
+  }
   create(createProductDto: CreateProductDto) {
     return 'This action adds a new product';
   }
 
   async findAll(): Promise<Array<Product>> {
-    const supaClient = this.supaClient.getSupabaseClient();
-    const { data, error } = await supaClient.from('products').select('*');
+    const { data, error } = await this.supaClient.from('products').select('*');
     if (error) {
       throw error;
     }
@@ -21,16 +23,30 @@ export class ProductService {
   }
 
   async findOne(id: number): Promise<Product> {
-    const supaClient = this.supaClient.getSupabaseClient();
-    const { data, error } = await supaClient
+    const { data, error } = await this.supaClient
       .from('products')
       .select('*')
       .eq('id', id)
       .single();
-    console.log('aaa ', error.code);
+
     if (error) {
       throw error;
     }
+
+    return data;
+  }
+
+  async findByCategory(category: string): Promise<Product[]> {
+    console.log('aloooo ', category);
+    const { data, error } = await this.supaClient
+      .from('products')
+      .select('*')
+      .eq('category', category);
+
+    if (error) {
+      throw error;
+    }
+
     return data;
   }
 

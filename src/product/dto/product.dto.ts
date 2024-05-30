@@ -7,4 +7,6 @@ export class Product {
   name: string;
   @IsNumber()
   price: number;
+  @IsString()
+  category: string;
 }
